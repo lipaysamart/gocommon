@@ -102,6 +102,17 @@ func (d *Database) Delete(ctx context.Context, value any, opts ...fnOption) erro
 	return nil
 }
 
+func (d *Database) Scan(ctx context.Context, result any, opts ...fnOption) error {
+	_, cancel := context.WithTimeout(ctx, DatabaseDeadLine)
+	defer cancel()
+
+	query := d.applyOptions(opts...)
+	if err := query.Scan(result).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func BuildQuery(query string, args ...any) []Query {
 	return []Query{
 		{
